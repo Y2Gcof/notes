@@ -73,10 +73,27 @@ class _LoginViewState extends State<LoginView> {
                 );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
+                  await showErrorDiolog(
+                    context,
+                    'User not found',
+                  );
                   developer.log('User not found');
                 } else if (e.code == 'wrong-password') {
-                  developer.log('Wrong password');
+                  await showErrorDiolog(
+                    context,
+                    'Wrong password',
+                  );
+                } else {
+                  await showErrorDiolog(
+                    context,
+                    'Error: ${e.code}',
+                  );
                 }
+              } catch (e) {
+                await showErrorDiolog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('Let\'s go'),
@@ -94,4 +111,27 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
+}
+
+Future<void> showErrorDiolog(
+  BuildContext context,
+  String text,
+) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('An error occured'),
+        content: Text(text),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Ok'),
+          )
+        ],
+      );
+    },
+  );
 }
