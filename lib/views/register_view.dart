@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer show log;
-
 import 'package:my_notes/constants/routes.dart';
+import 'package:my_notes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -60,21 +59,38 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userApp =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                print(userApp);
-                developer.log(userApp.toString());
+                Navigator.of(context).pushNamed(verifyEmailRoute);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  developer.log('Weak password');
+                  await showErrorDiolog(
+                    context,
+                    'Weak password',
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  developer.log('Email allredy in use');
+                  await showErrorDiolog(
+                    context,
+                    'Email allredy in use',
+                  );
                 } else if (e.code == 'invalid-email') {
-                  developer.log('Invalid email');
+                  await showErrorDiolog(
+                    context,
+                    'Invalid email',
+                  );
+                } else {
+                  await showErrorDiolog(
+                    context,
+                    'Error ${e.code}',
+                  );
                 }
+              } catch (e) {
+                await showErrorDiolog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('go'),
