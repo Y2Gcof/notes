@@ -9,7 +9,7 @@ Future<void> showErrorDiolog(
     builder: (context) {
       return AlertDialog(
         title: const Text('An error occured'),
-        content: const Text('Unknow error'),
+        content: Text(text),
         actions: [
           TextButton(
             onPressed: () {
